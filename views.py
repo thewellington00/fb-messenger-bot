@@ -5,6 +5,7 @@ import json
 import requests
 from flask import Flask, request
 from app import app, db
+from models import *
 
 @app.route('/', methods=['GET'])
 def verify():
