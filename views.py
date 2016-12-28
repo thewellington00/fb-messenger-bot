@@ -4,7 +4,7 @@ import json
 
 import requests
 from flask import request
-from models import messages, db
+from models import Messages, db
 from app import app
 
 
