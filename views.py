@@ -40,8 +40,11 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
 
+                    # just testing, prints the first entry in the database
+                    a = Messages.query.all()
+                    msg = a[0].message
                     if sender_id == os.environ["MY_UID"]:
-                        send_message(sender_id, "Hello Sir")
+                        send_message(sender_id, msg)
                     else:
                         send_message(sender_id, "I'm sorry I don't recognize you")
 
