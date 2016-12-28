@@ -4,8 +4,8 @@ import json
 
 import requests
 from flask import request
-from app import app
 from models import messages, db
+from app import app
 
 
 @app.route('/', methods=['GET'])
