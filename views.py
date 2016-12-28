@@ -15,7 +15,9 @@ def verify():
             return "Verification token mismatch", 403
         return request.args["hub.challenge"], 200
 
-    return "Hello World!", 200
+    # just testing, prints the first entry in the database
+    a = Messages.query.all()
+    return "<h1>{}</h1>".format(a[0].message), 200
 
 
 @app.route('/', methods=['POST'])
