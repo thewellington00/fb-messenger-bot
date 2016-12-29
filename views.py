@@ -17,8 +17,8 @@ def verify():
         return request.args["hub.challenge"], 200
 
     # just testing, prints the first entry in the database
-    a = Messages.query.all()
-    return "<h1>{}</h1>".format(a[0].message), 200
+    last_message_text = Messages.query.filter_by(id=1).first()
+    return "<h1>{}</h1>".format(last_message_text.message), 200
 
 
 @app.route('/', methods=['POST'])
@@ -40,13 +40,13 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
 
-                    # just testing, prints the first entry in the database
-                    a = Messages.query.all()
-                    msg = a[0].message
-                    if sender_id == os.environ["MY_UID"]:
-                        send_message(sender_id, msg)
-                    else:
-                        send_message(sender_id, "I'm sorry I don't recognize you")
+                    # pull last message
+                    last_message_text = Messages.query.filter_by(id=1).first()
+                    # send last message
+                    send_message(sender_id, last_message_text.message)
+                    # make this message the last message
+                    last_message_text.message = message_text
+                    db.session.commit()
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
