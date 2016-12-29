@@ -17,7 +17,7 @@ def verify():
         return request.args["hub.challenge"], 200
 
     # just testing, prints the first entry in the database
-    last_message_text = Messages.query.filter_by(id=1).first()
+    last_message_text = Messages.query.get(1)
     return "<h1>{}</h1>".format(last_message_text.message), 200
 
 
@@ -40,13 +40,23 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
 
-                    # pull last message
-                    last_message_text = Messages.query.filter_by(id=1).first()
-                    # send last message
-                    send_message(sender_id, last_message_text.message)
-                    # make this message the last message
-                    last_message_text.message = message_text
-                    db.session.commit()
+                    # if message is about the turtle/car, then either respond
+                    # with where it is or store where it is now. If not then
+                    # just do something goofy.
+                    if findword('car', message_text) or findword('turtle', message_text):
+                        car_message = Messages.query.get(2)
+                        if findword('?', message_text):
+                            send_message(sender_id, car_message.message)
+                        else:
+                            send_message(sender_id, 'Turtle location stored!')
+                    else:
+                        # pull last message
+                        last_message_text = Messages.query.get(1)
+                        # send last message
+                        send_message(sender_id, last_message_text.message)
+                        # make this message the last message
+                        last_message_text.message = message_text
+                        db.session.commit()
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -87,3 +97,9 @@ def send_message(recipient_id, message_text):
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
     sys.stdout.flush()
+
+def findword(word, long_string):
+    if word in long_string:
+        return True
+    else:
+        return False
