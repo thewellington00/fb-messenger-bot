@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import re
 
 import requests
 from flask import Flask, request
@@ -100,8 +101,11 @@ def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
     sys.stdout.flush()
 
-def findword(word, long_string):
-    if word.lower() in long_string.lower():
+def findword(word, sentence):
+    word_list = re.sub("[^\w]", " ",  sentence.lower()).split()
+    if word.lower() in word_list:
         return True
     else:
         return False
+
+
