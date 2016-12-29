@@ -101,7 +101,9 @@ def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
     sys.stdout.flush()
 
+
 def findword(word, sentence):
+    # remove symbols and create a list of words in a sentence
     word_list = re.sub("[^\w]", " ",  sentence.lower()).split()
     if word.lower() in word_list:
         return True
