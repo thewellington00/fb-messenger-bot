@@ -46,7 +46,7 @@ def webhook():
                     # just do something goofy.
                     if findword('car', message_text) or findword('turtle', message_text):
                         car_message = Messages.query.get(2)
-                        if findword('?', message_text):
+                        if '?' in message_text:
                             send_message(sender_id, car_message.message)
                         else:
                             car_message.message = message_text
