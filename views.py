@@ -48,6 +48,8 @@ def webhook():
                         if findword('?', message_text):
                             send_message(sender_id, car_message.message)
                         else:
+                            car_message.message = message_text
+                            db.session.commit()
                             send_message(sender_id, 'Turtle location stored!')
                     else:
                         # pull last message
@@ -99,7 +101,7 @@ def log(message):  # simple wrapper for logging to stdout on heroku
     sys.stdout.flush()
 
 def findword(word, long_string):
-    if word in long_string:
+    if word.lower() in long_string.lower():
         return True
     else:
         return False
