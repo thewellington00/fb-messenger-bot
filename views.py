@@ -7,6 +7,7 @@ import requests
 from flask import Flask, request
 from app import app, db
 from models import *
+import nextbus
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -19,7 +20,7 @@ def verify():
 
     # just testing, prints the first entry in the database
     last_message_text = Messages.query.get(1)
-    return "<h1>{}</h1>".format(last_message_text.message), 200
+    return "<h1>{}</h1>".format(nextbus.keystop()), 200
 
 
 @app.route('/', methods=['POST'])
@@ -52,6 +53,8 @@ def webhook():
                             car_message.message = message_text
                             db.session.commit()
                             send_message(sender_id, 'Turtle location stored!')
+                    elif findword('bus', message_text):
+                        send_message(sender_id, nextbus.keystop())
                     else:
                         # pull last message
                         last_message_text = Messages.query.get(1)
