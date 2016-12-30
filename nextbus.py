@@ -19,11 +19,8 @@ def keystop():
     xml = etree.fromstring(r.content)
     predictions = xml.xpath('//prediction')
 
-    arrive_times = 'Arrives in '
-    for predict in predictions:
-        arrive_times = arrive_times + predict.get('minutes') + ', '
-
-    return arrive_times[:-2] + ' minutes'
+    p = [p.get('minutes') for p in predictions]
+    return 'Arrives in ' + ', '.join(p) + ' minutes'
 
 if __name__ == '__main__':
     print keystop()
