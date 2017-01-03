@@ -42,17 +42,32 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
 
+                    # clean message
+                    message_text = clean_message(message_text)
+
                     # if message is about the turtle/car, then either respond
                     # with where it is or store where it is now. If not then
                     # just do something goofy.
-                    if findword('car', message_text) or findword('turtle', message_text):
-                        car_message = Messages.query.get(2)
-                        if '?' in message_text:
-                            send_message(sender_id, car_message.message)
+                    if message_text.lower() == 'undo':
+                        # assume we're undo-ing the car location
+                        # can build more sophisticated logic later
+                        car_location = Car_Locations.query.get(1)
+                        if car_location.last_location == '[empty]':
+                            send_message(sender_id, 'cannot undo anymore')
                         else:
-                            car_message.message = message_text
+                            car_location.current_location = car_location.last_location
+                            car_location.last_location = '[empty]'
                             db.session.commit()
-                            send_message(sender_id, 'Turtle location stored!')
+                            send_message(sender_id, 'Turtle location set back to [%s]' % car_location.current_location)
+                    elif: findword('car', message_text) or findword('turtle', message_text):
+                        car_location = Car_Locations.query.get(1)
+                        if '?' in message_text:
+                            send_message(sender_id, car_message.current_location)
+                        else:
+                            car_location.last_location = car_location.current_location
+                            car_location.current_location = message_text
+                            db.session.commit()
+                            send_message(sender_id, 'Turtle was at [%s], now at [%s]' % (car_location.last_location, car_location.current_location))
                     elif findword('bus', message_text):
                         send_message(sender_id, nextbus.keystop())
                     else:
@@ -112,5 +127,9 @@ def findword(word, sentence):
         return True
     else:
         return False
+
+def clean_message(message):
+    # eventually we'll remove potentially harmful code
+    return message
 
 
