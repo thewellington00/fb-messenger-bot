@@ -59,7 +59,8 @@ def webhook():
                             car_location.last_location = '[empty]'
                             db.session.commit()
                             send_message(sender_id, 'Turtle location set back to [%s]' % car_location.current_location)
-                    elif: findword('car', message_text) or findword('turtle', message_text):
+
+                    elif findword('car', message_text) or findword('turtle', message_text):
                         car_location = Car_Locations.query.get(1)
                         if '?' in message_text:
                             send_message(sender_id, car_message.current_location)
