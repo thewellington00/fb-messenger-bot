@@ -63,7 +63,7 @@ def webhook():
                     elif findword('car', message_text) or findword('turtle', message_text):
                         car_location = Car_Locations.query.get(1)
                         if '?' in message_text:
-                            send_message(sender_id, car_message.current_location)
+                            send_message(sender_id, car_location.current_location)
                         else:
                             car_location.last_location = car_location.current_location
                             car_location.current_location = message_text
