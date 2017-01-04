@@ -58,17 +58,17 @@ def webhook():
                             car_location.current_location = car_location.last_location
                             car_location.last_location = '[empty]'
                             db.session.commit()
-                            send_message(sender_id, 'Turtle location set back to [%s]' % car_location.current_location)
+                            send_message(sender_id, '%s (reverted back)' % car_location.current_location)
 
                     elif findword('car', message_text) or findword('turtle', message_text):
                         car_location = Car_Locations.query.get(1)
-                        if '?' in message_text:
+                        if '?' in message_text or message_text.lower() == 'car' or message_text.lower() == 'turtle':
                             send_message(sender_id, car_location.current_location)
                         else:
                             car_location.last_location = car_location.current_location
                             car_location.current_location = message_text
                             db.session.commit()
-                            send_message(sender_id, 'Turtle is now at [%s], type undo to undo' % (car_location.current_location))
+                            send_message(sender_id, '%s (type "undo" to undo)' % (car_location.current_location))
                     elif findword('bus', message_text):
                         send_message(sender_id, nextbus.keystop())
                     else:
