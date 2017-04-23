@@ -37,48 +37,54 @@ def webhook():
             for messaging_event in entry["messaging"]:
 
                 if messaging_event.get("message"):  # someone sent us a message
-
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
-                    message_text = messaging_event["message"]["text"]  # the message's text
 
-                    # clean message
-                    message_text = clean_message(message_text)
+                    if messaging_event["message"]["text"]: # someone sent us a message with text
+                        message_text = messaging_event["message"]["text"]  # the message's text
 
-                    # if message is about the turtle/car, then either respond
-                    # with where it is or store where it is now. If not then
-                    # just do something goofy.
-                    if message_text.lower() == 'undo':
-                        # assume we're undo-ing the car location
-                        # can build more sophisticated logic later
-                        car_location = Car_Locations.query.get(1)
-                        if car_location.last_location == '[empty]':
-                            send_message(sender_id, 'cannot undo anymore')
+                        # clean message
+                        message_text = clean_message(message_text)
+
+                        # if message is about the turtle/car, then either respond
+                        # with where it is or store where it is now. If not then
+                        # just do something goofy.
+                        if message_text.lower() == 'undo':
+                            # assume we're undo-ing the car location
+                            # can build more sophisticated logic later
+                            car_location = Car_Locations.query.get(1)
+                            if car_location.last_location == '[empty]':
+                                send_message(sender_id, 'cannot undo anymore')
+                            else:
+                                car_location.current_location = car_location.last_location
+                                car_location.last_location = '[empty]'
+                                db.session.commit()
+                                send_message(sender_id, '%s (reverted back)' % car_location.current_location)
+
+                        elif findword('car', message_text) or findword('turtle', message_text):
+                            car_location = Car_Locations.query.get(1)
+                            if '?' in message_text or message_text.lower() == 'car' or message_text.lower() == 'turtle':
+                                send_message(sender_id, car_location.current_location)
+                            else:
+                                car_location.last_location = car_location.current_location
+                                car_location.current_location = message_text
+                                db.session.commit()
+                                send_message(sender_id, '%s (type "undo" to undo)' % (car_location.current_location))
+                        elif findword('bus', message_text):
+                            send_message(sender_id, nextbus.keystop())
                         else:
-                            car_location.current_location = car_location.last_location
-                            car_location.last_location = '[empty]'
+                            # pull last message
+                            last_message_text = Messages.query.get(1)
+                            # send last message
+                            send_message(sender_id, last_message_text.message)
+                            # make this message the last message
+                            last_message_text.message = message_text
                             db.session.commit()
-                            send_message(sender_id, '%s (reverted back)' % car_location.current_location)
 
-                    elif findword('car', message_text) or findword('turtle', message_text):
-                        car_location = Car_Locations.query.get(1)
-                        if '?' in message_text or message_text.lower() == 'car' or message_text.lower() == 'turtle':
-                            send_message(sender_id, car_location.current_location)
-                        else:
-                            car_location.last_location = car_location.current_location
-                            car_location.current_location = message_text
-                            db.session.commit()
-                            send_message(sender_id, '%s (type "undo" to undo)' % (car_location.current_location))
-                    elif findword('bus', message_text):
-                        send_message(sender_id, nextbus.keystop())
                     else:
-                        # pull last message
-                        last_message_text = Messages.query.get(1)
-                        # send last message
-                        send_message(sender_id, last_message_text.message)
-                        # make this message the last message
-                        last_message_text.message = message_text
-                        db.session.commit()
+                        do_not_recognize = "I'm sorry I don't recognize that"
+                        send_message(sender_id, do_not_recognize)
+
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
