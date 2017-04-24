@@ -83,6 +83,7 @@ def webhook():
 
                     else:
                         if messaging_event.get("message").get("attachments"):
+                            att = messaging_event.get("message").get("attachments")
                             if len(att) > 1:
                                 # if there's more than one attachment log it, pick the first one and move on
                                 log('there is more than one attachment!?!')
