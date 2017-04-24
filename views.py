@@ -87,7 +87,7 @@ def webhook():
                                 # if there's more than one attachment log it, pick the first one and move on
                                 log('there is more than one attachment!?!')
                             att = att[0]
-                            if att['type'] == 'location'
+                            if att['type'] == 'location':
                                 do_not_recognize = "I'm sorry I don't recognize that"
                                 send_message(sender_id, do_not_recognize)
                             else:
