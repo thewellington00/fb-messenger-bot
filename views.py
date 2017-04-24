@@ -82,21 +82,22 @@ def webhook():
                             db.session.commit()
 
                     else:
-                        if messaging_event.get("message").get("attachments"):
-                            if len(att) > 1:
-                                # if there's more than one attachment log it, pick the first one and move on
-                                log('there is more than one attachment!?!')
-                            att = att[0]
-                            if att['type'] == 'location':
-                                do_not_recognize = "I'm sorry I don't recognize that"
-                                send_message(sender_id, do_not_recognize)
-                            else:
-                                # test sending a quick reply
-                                ask_location(sender_id)
+                        pass
+                        # if messaging_event.get("message").get("attachments"):
+                        #     if len(att) > 1:
+                        #         # if there's more than one attachment log it, pick the first one and move on
+                        #         log('there is more than one attachment!?!')
+                        #     att = att[0]
+                        #     if att['type'] == 'location':
+                        #         do_not_recognize = "I'm sorry I don't recognize that"
+                        #         send_message(sender_id, do_not_recognize)
+                        #     else:
+                        #         # test sending a quick reply
+                        #         ask_location(sender_id)
 
-                        else:
-                            # test sending a quick reply
-                            ask_location(sender_id)
+                        # else:
+                        #     # test sending a quick reply
+                        #     ask_location(sender_id)
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -138,6 +139,7 @@ def ask_location(recipient_id):
         log(r.status_code)
         log(r.text)
 
+
 def ask_color(recipient_id):
     # send a "quick reply" example request, in this case asking for colors
     log("sending ask color quick reply to {recipient}".format(recipient=recipient_id))
@@ -172,6 +174,7 @@ def ask_color(recipient_id):
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
+
 
 def send_message(recipient_id, message_text):
     log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
