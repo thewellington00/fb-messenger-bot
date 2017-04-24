@@ -82,8 +82,10 @@ def webhook():
                             db.session.commit()
 
                     else:
-                        do_not_recognize = "I'm sorry I don't recognize that"
-                        send_message(sender_id, do_not_recognize)
+                        # test sending a quick reply
+                        ask_location(sender_id)
+                        # do_not_recognize = "I'm sorry I don't recognize that"
+                        # send_message(sender_id, do_not_recognize)
 
 
                 if messaging_event.get("delivery"):  # delivery confirmation
@@ -97,9 +99,39 @@ def webhook():
 
     return "ok", 200
 
+def ask_location(recipient_id):
+    # send a "quick reply" request for location
+    log("sending location quick reply to {recipient}".format(recipient=recipient_id))
+
+    params = {
+        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message":{
+            "text":"Pick a color:",
+            "quick_replies":[
+            {
+              "content_type":"text",
+              "title":"Red",
+            },
+            {
+              "content_type":"text",
+              "title":"Green",
+            }]
+        }
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log(r.text)
 
 def send_message(recipient_id, message_text):
-
     log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
 
     params = {
