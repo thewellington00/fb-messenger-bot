@@ -115,7 +115,7 @@ def ask_location(recipient_id):
             "id": recipient_id
         },
         "message":{
-            "text":"Pick a color:",
+            "text":"Send location? (FYI this doesn't work yet)",
             "quick_replies":[
                 {
                   "content_type":"location"
