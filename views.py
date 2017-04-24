@@ -99,8 +99,37 @@ def webhook():
 
     return "ok", 200
 
+
 def ask_location(recipient_id):
     # send a "quick reply" request for location
+    log("sending location quick reply to {recipient}".format(recipient=recipient_id))
+
+    params = {
+        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message":{
+            "text":"Pick a color:",
+            "quick_replies":[
+                {
+                  "content_type":"location"
+                }
+            ]
+        }
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log(r.text)
+
+def ask_color(recipient_id):
+    # send a "quick reply" example request, in this case asking for colors
     log("sending location quick reply to {recipient}".format(recipient=recipient_id))
 
     params = {
