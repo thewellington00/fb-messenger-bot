@@ -82,11 +82,21 @@ def webhook():
                             db.session.commit()
 
                     else:
-                        # test sending a quick reply
-                        ask_location(sender_id)
-                        # do_not_recognize = "I'm sorry I don't recognize that"
-                        # send_message(sender_id, do_not_recognize)
+                        if messaging_event.get("message").get("attachments"):
+                            if len(att) > 1:
+                                # if there's more than one attachment log it, pick the first one and move on
+                                log('there is more than one attachment!?!')
+                            att = att[0]
+                            if att['type'] == 'location'
+                                do_not_recognize = "I'm sorry I don't recognize that"
+                                send_message(sender_id, do_not_recognize)
+                            else:
+                                # test sending a quick reply
+                                ask_location(sender_id)
 
+                        else:
+                            # test sending a quick reply
+                            ask_location(sender_id)
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -130,7 +140,7 @@ def ask_location(recipient_id):
 
 def ask_color(recipient_id):
     # send a "quick reply" example request, in this case asking for colors
-    log("sending location quick reply to {recipient}".format(recipient=recipient_id))
+    log("sending ask color quick reply to {recipient}".format(recipient=recipient_id))
 
     params = {
         "access_token": os.environ["PAGE_ACCESS_TOKEN"]
