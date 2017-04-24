@@ -116,14 +116,17 @@ def ask_location(recipient_id):
         "message":{
             "text":"Pick a color:",
             "quick_replies":[
-            {
-              "content_type":"text",
-              "title":"Red",
-            },
-            {
-              "content_type":"text",
-              "title":"Green",
-            }]
+                {
+                  "content_type":"text",
+                  "title":"Red",
+                  "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED"
+                },
+                {
+                  "content_type":"text",
+                  "title":"Green",
+                  "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
+                }
+            ]
         }
     })
     r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
